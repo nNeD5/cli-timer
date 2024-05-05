@@ -1,7 +1,6 @@
 //TODO: add colors
-use std::{error::Error, fmt};
 use colored::Colorize;
-
+use std::{error::Error, fmt};
 
 pub enum ParseError {
     EmptyLine,
@@ -20,6 +19,11 @@ impl Error for ParseError {}
 
 fn error_handler(error: &ParseError, f: &mut fmt::Formatter) -> fmt::Result {
     match error {
-        ParseError::EmptyLine => writeln!(f, "{}", "input is an emtpy line".red().bold()),
+        ParseError::EmptyLine => writeln!(
+            f,
+            "{} {}",
+            "Error:".red().bold(),
+            "your input is an emtpy line".red()
+        ),
     }
 }

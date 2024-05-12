@@ -1,20 +1,18 @@
-// TODO: check is ouput from error is correct
+//TODO: refactor error test out. Impossible to read exptected value  
 // TODO: change u32 in parse_duratint to Time object?
-// TODO: write test to check value parsing
-// TODO: test to calculate duration based on suffix and value
 // TODO: format hh:mm:ss
-// TODO: from char to struct with value in seconds
 // TODO: display with ratatui
-// TODO: ask how to reimplement termination on type Resutl = std::result::Result
+
+use error::CliTimerError;
 
 pub mod error;
 
-const INPUT_DURATION: &str = "1";
+const INPUT_DURATION: &str = "11";
 
 fn format_input(input: &str) -> String {
     input.trim().to_lowercase()
 }
-fn get_multiplier_as_secs(suffix: &str) -> Result<u32, error::ParseError> {
+fn get_multiplier_as_secs(suffix: &str) -> Result<u32, error::CliTimerError> {
     match suffix.chars().last() {
         Some(c) => match c {
             's' => Ok(1u32),
@@ -31,7 +29,7 @@ fn get_multiplier_as_secs(suffix: &str) -> Result<u32, error::ParseError> {
         None => return Err(error::ParseError::UnknownSuffix),
     }
 }
-fn parse_duration_as_secs(input: &str) -> Result<u32, error::ParseError> {
+fn parse_duration_as_secs(input: &str) -> Result<u32, error::CliTimerError> {
     if input.is_empty() {
         return Err(error::ParseError::EmptyLine);
     }
@@ -44,14 +42,14 @@ fn parse_duration_as_secs(input: &str) -> Result<u32, error::ParseError> {
     let duration_in_seconds = duration * sec_multiplier;
     Ok(duration_in_seconds)
 }
-fn try_main() -> Result<(), error::ParseError> {
+fn try_main() -> Result<(), error::CliTimerError> {
     let input = format_input(INPUT_DURATION);
     let _suffix = parse_duration_as_secs(&input)?;
     Ok(())
 }
 fn main() {
     if let Err(e) = try_main() {
-        eprintln!("{:?}", e);
+        eprintln!("{}", e);
         std::process::exit(1);
     }
 }
@@ -59,6 +57,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use colored::Colorize;
 
     #[test]
     fn test_formating() {
@@ -77,30 +76,30 @@ mod tests {
         assert_eq!(parse_duration_as_secs("15h").unwrap(), 15 * 60 * 60);
     }
     #[test]
-    fn test_error_type() {
-        assert!(matches!(
-            parse_duration_as_secs(""),
-            Err(error::ParseError::EmptyLine)
-        ));
-        assert!(matches!(
-            parse_duration_as_secs("15"),
-            Err(error::ParseError::WithoutSuffix)
-        ));
-        assert!(matches!(
-            parse_duration_as_secs("1"),
-            Err(error::ParseError::WithoutSuffix)
-        ));
-        assert!(matches!(
-            parse_duration_as_secs("1a"),
-            Err(error::ParseError::UnknownSuffix)
-        ));
-        assert!(matches!(
-            parse_duration_as_secs("m"),
-            Err(error::ParseError::UnableParseDuration)
-        ));
-        assert!(matches!(
-            parse_duration_as_secs("sm"),
-            Err(error::ParseError::UnableParseDuration)
-        ));
+    fn test_error_ouput() {
+        assert_eq!(format!(
+            "{} {}",
+            "Error:".red().bold(),
+            "your `input` is an emtpy line".red()
+        ), error::ParseError::EmptyLine.to_string());
+        assert_eq!(format!(
+            "{} {}\n{} {}",
+            "Error:".red().bold(),
+            "can't find suffix".red(),
+            "Hint:".yellow().bold(),
+            "you should add suffix in your input. s - seconds, m - minute, h - hours".yellow()
+        ), error::ParseError::WithoutSuffix.to_string());
+        assert_eq!(format!(
+            "{} {}\n{} {}",
+            "Error:".red().bold(),
+            "unknown suffix".red(),
+            "Hint:".yellow().bold(),
+            "possible suffix: s - seconds, m - minute, h - hours".yellow()
+        ), error::ParseError::UnknownSuffix.to_string());
+        assert_eq!(format!(
+            "{} {}",
+            "Error:".red().bold(),
+            "unable to parse duration".red()
+        ), error::ParseError::UnableParseDuration.to_string());
     }
 }

@@ -30,8 +30,8 @@ impl Display for CliTimerError {
 pub mod Errors {
     use super::*;
     pub const EmptyLine: CliTimerError = CliTimerError {
-        error_text: "your input is an emtpy line or zero recognizable symbols",
-        hint_text: "",
+        error_text: "your input is an emtpy line or it is zero recognizable symbols",
+        hint_text: "usage example: ./cli_timer \"1h20m10s\"",
     };
     pub const WithoutSuffix: CliTimerError = CliTimerError {
         error_text: "can't find suffix",

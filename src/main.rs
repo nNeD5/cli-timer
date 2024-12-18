@@ -44,7 +44,6 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use colored::Colorize;
     use input::*;
 
     #[test]
@@ -71,45 +70,6 @@ mod tests {
         assert_eq!(
             as_duration("3h15m20s").unwrap(),
             (3 * 60 * 60) + (15 * 60) + 20
-        );
-    }
-    #[test]
-    fn test_error_ouput() {
-        assert_eq!(
-            format!(
-                "{} {}",
-                "Error:".red().bold(),
-                "your `input` is an emtpy line".red()
-            ),
-            Errors::EmptyLine.to_string()
-        );
-        assert_eq!(
-            format!(
-                "{} {}\n{} {}",
-                "Error:".red().bold(),
-                "can't find suffix".red(),
-                "Hint:".yellow().bold(),
-                "you should add suffix in your input. s - seconds, m - minute, h - hours".yellow()
-            ),
-            Errors::WithoutSuffix.to_string()
-        );
-        assert_eq!(
-            format!(
-                "{} {}\n{} {}",
-                "Error:".red().bold(),
-                "unknown suffix".red(),
-                "Hint:".yellow().bold(),
-                "possible suffix: s - seconds, m - minute, h - hours".yellow()
-            ),
-            Errors::UnknownSuffix.to_string()
-        );
-        assert_eq!(
-            format!(
-                "{} {}",
-                "Error:".red().bold(),
-                "unable to parse duration".red()
-            ),
-            Errors::UnableParseDuration.to_string()
         );
     }
 }

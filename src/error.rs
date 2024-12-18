@@ -27,7 +27,7 @@ impl Display for CliTimerError {
 }
 
 #[allow(non_upper_case_globals, non_snake_case)]
-pub mod ParseError {
+pub mod Errors {
     use super::*;
     pub const EmptyLine: CliTimerError = CliTimerError {
         error_text: "your `input` is an emtpy line",
@@ -44,5 +44,9 @@ pub mod ParseError {
     pub const UnableParseDuration: CliTimerError = CliTimerError {
         error_text: "unable to parse duration",
         hint_text: "",
+    };
+    pub const UnableDisplay: CliTimerError = CliTimerError {
+        error_text: "unable to display",
+        hint_text: "some IO errors, not clue what can cause it",
     };
 }

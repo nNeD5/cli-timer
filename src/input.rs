@@ -1,7 +1,13 @@
 use crate::error::{CliTimerError, Errors};
 
 pub fn format_input(input: &str) -> String {
-    input.trim().to_lowercase()
+    let mut result = String::new();
+    for c in input.trim().to_lowercase().chars() {
+        if c.is_ascii_digit() || ['h', 'm', 's'].contains(&c) {
+            result.push(c);
+        }
+    }
+    result
 }
 
 pub fn get_multiplier_as_secs(suffix: char) -> Result<u64, CliTimerError> {
@@ -26,12 +32,10 @@ pub fn as_duration(input: &str) -> Result<u64, CliTimerError> {
     let mut seconds: u64 = 0;
     let mut digits = String::new();
     for c in input.chars() {
-        dbg!(&c);
         if c.is_ascii_digit() {
             digits.push(c);
         } else {
             let scale = get_multiplier_as_secs(c)?;
-            dbg!(&digits);
             let number = match digits.parse::<u64>() {
                 Err(_) => return Err(Errors::UnableParseDuration),
                 Ok(n) => n,

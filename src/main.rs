@@ -5,9 +5,15 @@ mod ascii;
 mod display;
 mod error;
 mod input;
+use crossterm::cursor;
+use crossterm::execute;
+use crossterm::terminal::{EnterAlternateScreen, LeaveAlternateScreen};
 use error::{CliTimerError, Errors};
+use std::io;
 
 fn try_main() -> Result<(), CliTimerError> {
+    execute!(io::stdout(), EnterAlternateScreen).unwrap();
+
     let args: Vec<_> = env::args().collect();
     if args.len() < 2 {
         return Err(Errors::EmptyLine);
@@ -29,8 +35,10 @@ fn try_main() -> Result<(), CliTimerError> {
 fn main() {
     if let Err(e) = try_main() {
         eprintln!("{}", e);
+        execute!(io::stdout(), LeaveAlternateScreen, cursor::Show).unwrap();
         std::process::exit(1);
     }
+    execute!(io::stdout(), LeaveAlternateScreen, cursor::Show).unwrap();
 }
 
 #[cfg(test)]

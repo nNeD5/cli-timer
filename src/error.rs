@@ -1,6 +1,6 @@
 use colored::Colorize;
 use std::error::Error;
-use std::fmt::{Display, Debug, Formatter, Result};
+use std::fmt::{Debug, Display, Formatter, Result};
 
 #[derive(Debug)]
 pub struct CliTimerError {

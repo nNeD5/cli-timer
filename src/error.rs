@@ -30,7 +30,7 @@ impl Display for CliTimerError {
 pub mod Errors {
     use super::*;
     pub const EmptyLine: CliTimerError = CliTimerError {
-        error_text: "your `input` is an emtpy line",
+        error_text: "your input is an emtpy line or zero recognizable symbols",
         hint_text: "",
     };
     pub const WithoutSuffix: CliTimerError = CliTimerError {

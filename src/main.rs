@@ -1,6 +1,7 @@
+// TODO: some sync algorithm
 use std::env;
 use std::thread;
-use std::time::Duration;
+use std::time::{Instant, Duration};
 mod ascii;
 mod display;
 mod error;
@@ -19,23 +20,26 @@ fn try_main() -> Result<(), CliTimerError> {
         return Err(Errors::EmptyLine);
     }
     let input = input::format_input(&args[1]);
-    let mut duration = input::as_duration(&input)?;
+    let duration = input::as_duration(&input)? as f64;
 
     let one_sec = Duration::from_secs(1);
-    while duration > 0 {
-        if display::display_left_time(duration).is_err() {
+    let start = Instant::now();
+    let mut from_start = start.elapsed().as_secs_f64();
+    while from_start < duration {
+        if display::display_left_time((duration - from_start) as u64).is_err() {
             return Err(Errors::UnableDisplay);
         }
-        duration -= 1;
         thread::sleep(one_sec);
+        from_start = start.elapsed().as_secs_f64();
+        dbg!(from_start);
     }
     Ok(())
 }
 
 fn main() {
     if let Err(e) = try_main() {
-        eprintln!("{}", e);
         execute!(io::stdout(), LeaveAlternateScreen, cursor::Show).unwrap();
+        eprintln!("{}", e);
         std::process::exit(1);
     }
     execute!(io::stdout(), LeaveAlternateScreen, cursor::Show).unwrap();
